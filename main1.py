@@ -1,41 +1,43 @@
-from kivy.app import App
+from kivy.lang import Builder
 from kivymd.app import MDApp
-from kivy.uix.floatlayout import FloatLayout
+from kivymd.uix.textfield import MDTextField
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from kivymd.uix.label import MDLabel
-from kivymd.uix.textfield import MDTextField
-
 from pymongo import MongoClient
-import pymongo
 
 class LoginScreen(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.orientation = 'vertical'
         self.padding = [50, 50, 50, 50]
+        self.background_color = [1, 1, 1, 1]  # Define o fundo como branco
+        self.spacing = 20  # Espaçamento entre widgets
+
         # Adicione a imagem do logotipo "VI BANK" (ajuste o tamanho conforme necessário)
         self.logo_image = Image(
             source='image-removebg-preview.png',  # Substitua pelo caminho da sua imagem
             size_hint=(None, None),
-            size=(300, 300),  
+            size=(300, 300),
             pos_hint={'center_x': 0.5, 'center_y': 0.7}  # Centralize a imagem
         )
         self.add_widget(self.logo_image)
 
-        self.cpf_input = TextInput(
+        self.cpf_input = MDTextField(
             hint_text="CPF",
             input_type="number",
+            size_hint=(None, None),
+            size=(300, 48)  # Ajuste o tamanho da caixa de entrada de CPF
         )
         self.add_widget(self.cpf_input)
 
-        self.password_input = TextInput(
+        self.password_input = MDTextField(
             hint_text="Senha",
             password=True,
+            size_hint=(None, None),
+            size=(300, 48)  # Ajuste o tamanho da caixa de entrada de senha
         )
         self.add_widget(self.password_input)
 
@@ -46,6 +48,14 @@ class LoginScreen(BoxLayout):
             on_release=self.login
         )
         self.add_widget(self.login_button)
+
+        self.signup_label = Label(
+            text="[ref=Cadastro][color=0000FF]Cadastrar-se[/color][/ref]",
+            markup=True,
+            halign="left",  # Alinhe o texto à esquerda
+            on_ref_press=self.show_signup_popup
+        )
+        self.add_widget(self.signup_label)
 
     def login(self, instance):
         cpf = self.cpf_input.text
@@ -64,15 +74,19 @@ class LoginScreen(BoxLayout):
                           size_hint=(None, None), size=(400, 200))
             popup.open()
         else:
-            popup = Popup(title='falha',
-                          content=Label(text='senha ou usuario incorreto!'),
+            popup = Popup(title='Falha',
+                          content=Label(text='Senha ou usuário incorreto!'),
                           size_hint=(None, None), size=(400, 200))
             popup.open()
 
         self.cpf_input.text = ""
         self.password_input.text = ""
 
-class MyApp(App):
+    def show_signup_popup(self, instance, value):
+        # Implemente a lógica para exibir o popup de cadastro aqui
+        pass
+
+class MyApp(MDApp):
     def build(self):
         return LoginScreen()
 
